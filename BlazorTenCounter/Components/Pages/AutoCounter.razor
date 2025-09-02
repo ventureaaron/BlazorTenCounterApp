@@ -1,0 +1,29 @@
+﻿@page "/auto-counter/{CountFrom:int}/{CountTo:int}/{AutoSpeed:double}/{DisplayCount:bool}"
+
+<div class="title"><div class="center"><p>10 Counter (Auto)</p></div></div>
+
+<div class="content">
+    <div></div>
+    <div>
+        <BlazorTenCounter.Components.TenCounter.AutoCounterController CountTo=@CountTo AutoSpeed=@AutoSpeed CountFrom=@CountFrom DisplayCount=@DisplayCount />
+        <hr />
+        <div class="center">
+            <div class="navsection center">
+                <BlazorTenCounter.Components.TenCounter.NavForm />
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+@code {
+    [Parameter]
+    public int CountTo { get; set; }
+    [Parameter]
+    public double AutoSpeed { get; set; }
+    [Parameter]
+    public int CountFrom { get; set; }
+    [Parameter]
+    public bool DisplayCount { get; set; } = false;
+
+}

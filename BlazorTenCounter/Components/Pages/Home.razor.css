@@ -1,0 +1,35 @@
+﻿.content {
+    display: grid;
+    grid-gap: .5rem;
+    grid-template-columns: auto min(750px,80%) auto;
+    padding: .5rem 0 .5rem 0;
+}
+
+.title {
+    font-size: 2.5rem;
+    border-bottom: solid black 2px;
+    border-top: solid #910f0f;
+    background-color: #910f0f;
+    color: white;
+}
+
+.welcome {
+    font-size: 1.5rem;
+}
+
+.center {
+    margin: auto;
+    width: fit-content;
+}
+
+.expandable > input[type="checkbox"] {
+    display: none;
+}
+
+    .expandable > input[type="checkbox"]:checked ~ div {
+        display: none;
+    }
+
+    .expandable > input[type="checkbox"] ~ div {
+        display: block;
+    }

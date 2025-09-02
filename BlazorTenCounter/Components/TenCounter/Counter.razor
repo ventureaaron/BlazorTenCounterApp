@@ -1,0 +1,92 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime js
+
+<div id="countDiv@(ID)" data-id="@(ID)">
+    <div class="countDisplay">@currentCount</div>
+    <div id="rect@(ID)"></div>
+</div>
+
+<script src="/js/counterScript.js"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
+
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public int ID { get; set; }
+    private int currentCount = 0;
+    private int LIMIT = 10;
+    public bool IsRendered { get; set; } = false;
+    [Parameter]
+    public EventCallback<bool> OnRendered { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            bool libsLoaded = false;
+            do
+            {
+                libsLoaded = await js.InvokeAsync<bool>("isD3Loaded");
+                await Task.Delay(250);
+            }
+            while (libsLoaded == false);
+
+            await js.InvokeVoidAsync("renderGrid", ID);
+            IsRendered = true;
+            await OnRendered.InvokeAsync(IsRendered);
+        }
+    }
+
+    public int AddReturnRemainder(int a, bool display)
+    {
+        int diff;
+        if (display)
+        {
+            diff = IncrementCountWithDisplay(a);
+        }
+        else
+        {
+            diff = IncrementCount(a);
+        }
+        StateHasChanged();
+        return diff;
+    }
+
+    private int IncrementCountWithDisplay(int inc)
+    {
+        int start = currentCount;
+        currentCount += inc;
+        int diff = currentCount - LIMIT;
+        if (diff > 0)
+        {
+            //got too many need to return some
+            currentCount = LIMIT;
+        }
+        //need to render from start to current dots
+        for (int i = start; i < currentCount; i++)
+        {
+            js.InvokeVoidAsync("drawCircleWithDisplay", ID, i + 1, (ID * 10 + currentCount));
+        }
+        return diff > 0 ? diff : 0;
+    }
+
+    private int IncrementCount(int inc)
+    {
+        int start = currentCount;
+        currentCount += inc;
+        int diff = currentCount - LIMIT;
+        if (diff > 0)
+        {
+            //got too many need to return some
+            currentCount = LIMIT;
+        }
+        //need to render from start to current dots
+        for (int i = start; i < currentCount; i++)
+        {
+            js.InvokeVoidAsync("drawCircle", ID, i + 1);
+        }
+        return diff > 0 ? diff : 0;
+    }
+}

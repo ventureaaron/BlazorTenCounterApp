@@ -1,0 +1,99 @@
+﻿@rendermode InteractiveServer
+
+<div class="controller">
+    @foreach (Counter counter in counters)
+    {
+        <Counter @ref="counters[counters.IndexOf(counter)]" ID="counters.IndexOf(counter)" />
+    }
+</div>
+
+<button @onclick=AddCount>Add 1</button>
+
+<script>
+
+    window.addEventListener('resize', function (event) {
+        location.reload();
+    });
+
+</script>
+
+@code {
+    [Parameter]
+    public int CountFrom { get; set; } = 0;
+    [Parameter]
+    public bool DisplayCount { get; set; }
+
+    private List<Counter> counters;
+    private int CurrentCount = 0;
+
+    protected override void OnParametersSet()
+    {
+        int sizeCounters = CountFrom == 0 ? 1 : (int)Math.Ceiling(CountFrom / 10.0);
+
+        counters = new List<Counter>();
+        for (int i = 0; i < sizeCounters; i++)
+        {
+            counters.Add(new Counter());
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //initialize
+            if (CountFrom > 0)
+            {
+                while (CurrentCount < CountFrom)
+                {
+                    int addAmount = 1;
+                    CurrentCount += addAmount;
+
+                    if (counters != null)
+                    {
+                        for (int i = 0; i < counters.Count; i++)
+                        {
+                            while (!counters[i].IsRendered)
+                            {
+                                await Task.Delay(250);
+                            }
+                            addAmount = counters[i].AddReturnRemainder(addAmount, DisplayCount);
+                            if (addAmount == 0) break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public async Task AddCount()
+    {
+        int addAmount = 1;
+
+        CurrentCount += addAmount;
+        while (addAmount > 0)
+        {
+            if (counters != null)
+            {
+                int iterations = counters.Count;
+                for (int j = 0; j < iterations; j++)
+                {
+                    addAmount = counters[j].AddReturnRemainder(addAmount, DisplayCount);
+                    if (addAmount == 0) break;
+                    else if (j == counters.Count - 1)
+                    {
+                        Counter newcounter = new Counter();
+                        counters.Add(newcounter);
+                        //
+                        while (!counters[iterations].IsRendered)
+                        {
+                            await Task.Delay(250);
+                        }
+                        iterations++;
+
+                    }
+                }
+            }
+        }
+    }
+}

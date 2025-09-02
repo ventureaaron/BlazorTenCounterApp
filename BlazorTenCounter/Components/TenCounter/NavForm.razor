@@ -1,0 +1,100 @@
+﻿@rendermode InteractiveServer
+@inject NavigationManager nav
+
+<div class="NavCard">
+    <h2>Counting Mode</h2>
+
+    <div>
+        <form method="post" @formname="AutoForm" @onsubmit="loadAutoCounter">
+            <AntiforgeryToken />
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'Auto')">Auto</button>
+                <button class="tablinks" onclick="openTab(event, 'Manual')">Manual</button>
+            </div>
+            <div id="Auto" class="tabcontent default">
+                <h3>Auto Count</h3>
+                <div>
+                    <label for="countStartAuto">Start from:</label>
+                    <input type="number" id="countStartAuto" name="countStart" @bind-value="startCount" />
+                </div>
+                <div>
+                    <label for="countNumberAuto">Count to:</label>
+                    <input type="number" id="countNumberAuto" name="countNumber" @bind-value="countTo" />
+                </div>
+                <div>
+                    <label for="speeds">Speed:</label>
+                    <select name="speeds" id="speeds" @onchange="SelectedAutoSpeedChanged">
+                        <option value=".6">Fast</option>
+                        <option value="1" selected="true">Medium</option>
+                        <option value="1.5">Slow</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="checkbox" id="countWithDisplay" name="countDisplay" @bind-value="countDisplay" />
+                    <label for="countWithDisplay">Display Count</label>
+                </div>
+                <button class="goButton">Go</button>
+            </div>
+        </form>
+        <form method="post" @formname="AutoForm" @onsubmit="loadManualCounter">
+            <div id="Manual" class="tabcontent">
+                <h3>Manual Count</h3>
+                <div>
+                    <label for="countStartManual">Start from:</label>
+                    <input type="number" id="countStartManual" name="countStart" @bind-value="startCount" />
+                </div>
+                <div>
+                    <input type="checkbox" id="countWithDisplayManual" name="countDisplay" @bind-value="countDisplay" />
+                    <label for="countWithDisplayManual">Display Count</label>
+                </div>
+                <button class="goButton">Go</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function openTab(evt, tabName) {
+        evt.preventDefault();
+        var i, tabcontent, tablinks;
+
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+@code {
+    private int startCount = 0;
+    private int countTo = 20;
+    private double autoSpeed = 1;
+    private bool countDisplay = false;
+
+    private void SelectedAutoSpeedChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            autoSpeed = double.Parse(e.Value.ToString()!);
+        }
+    }
+
+    private void loadAutoCounter()
+    {
+        //auto - counter / @autoCountTo / @autoSpeed
+        nav.NavigateTo($"/auto-counter/{startCount}/{countTo}/{autoSpeed}/{countDisplay}");
+    }
+
+    private void loadManualCounter()
+    {
+        //auto - counter / @autoCountTo / @autoSpeed
+        nav.NavigateTo($"/manual-counter/{startCount}/{countDisplay}");
+    }
+}

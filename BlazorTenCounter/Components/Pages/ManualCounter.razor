@@ -1,0 +1,24 @@
+﻿@page "/manual-counter/{CountFrom:int}/{CountDisplay:bool}"
+
+<div class="title"><div class="center"><p>10 Counter (Manual)</p></div></div>
+
+<div class="content">
+    <div></div>
+    <div>
+        <BlazorTenCounter.Components.TenCounter.ManualCounterController CountFrom="CountFrom" DisplayCount=@CountDisplay />
+        <hr />
+        <div class="center">
+            <div class="navsection center">
+                <BlazorTenCounter.Components.TenCounter.NavForm />
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+@code {
+    [Parameter]
+    public int CountFrom { get; set; } = 0;
+    [Parameter]
+    public bool CountDisplay { get; set; } = false;
+}

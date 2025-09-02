@@ -1,0 +1,32 @@
+﻿@rendermode InteractiveServer
+@page "/"
+
+<div class="title"><div class="center"><p>10 Counter</p></div></div>
+
+<div class="content">
+    <div></div>
+    <div>
+        <div class="welcome">
+            <p>Welcome to the online 10 counter. Modes currently available:</p>
+            <ul>
+                <li>Manual count (by one)</li>
+                <li>Automatic count through range</li>
+            </ul>
+            <p>Use the form below to get started. More coming soon...</p>
+        </div>
+        <hr />
+        <div class="center">
+            <div>
+                <div class="navsection center">
+                    <BlazorTenCounter.Components.TenCounter.NavForm />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+
+@code {
+    
+}
