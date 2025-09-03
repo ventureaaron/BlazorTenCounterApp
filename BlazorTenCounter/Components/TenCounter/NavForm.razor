@@ -10,6 +10,7 @@
             <div class="tab">
                 <button class="tablinks active" onclick="openTab(event, 'Auto')">Auto</button>
                 <button class="tablinks" onclick="openTab(event, 'Manual')">Manual</button>
+                <button class="tablinks" onclick="openTab(event, 'Flash')">Flash Card</button>
             </div>
             <div id="Auto" class="tabcontent default">
                 <h3>Auto Count</h3>
@@ -36,7 +37,7 @@
                 <button class="goButton">Go</button>
             </div>
         </form>
-        <form method="post" @formname="AutoForm" @onsubmit="loadManualCounter">
+        <form method="post" @formname="ManualForm" @onsubmit="loadManualCounter">
             <div id="Manual" class="tabcontent">
                 <h3>Manual Count</h3>
                 <div>
@@ -46,6 +47,20 @@
                 <div>
                     <input type="checkbox" id="countWithDisplayManual" name="countDisplay" @bind-value="countDisplay" />
                     <label for="countWithDisplayManual">Display Count</label>
+                </div>
+                <button class="goButton">Go</button>
+            </div>
+        </form>
+        <form method="post" @formname="FlashForm" @onsubmit="loadFlashCounter">
+            <div id="Flash" class="tabcontent">
+                <h3>Flash Card</h3>
+                <div>
+                    <label for="flashRangeStart">Lowest Number:</label>
+                    <input type="number" id="flashRangeStart" name="rangeStart" @bind-value="rangeStart" />
+                </div>
+                <div>
+                    <label for="flashRangeEnd">Highest Number:</label>
+                    <input type="number" id="flashRangeEnd" name="rangeEnd" @bind-value="rangeEnd" />
                 </div>
                 <button class="goButton">Go</button>
             </div>
@@ -77,6 +92,8 @@
     private int countTo = 20;
     private double autoSpeed = 1;
     private bool countDisplay = false;
+    private int rangeStart = 0;
+    private int rangeEnd = 20;
 
     private void SelectedAutoSpeedChanged(ChangeEventArgs e)
     {
@@ -96,5 +113,10 @@
     {
         //auto - counter / @autoCountTo / @autoSpeed
         nav.NavigateTo($"/manual-counter/{startCount}/{countDisplay}");
+    }
+
+    private void loadFlashCounter()
+    {
+        nav.NavigateTo($"/flash-card/{rangeStart}/{rangeEnd}");
     }
 }

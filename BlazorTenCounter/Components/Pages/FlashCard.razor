@@ -1,0 +1,24 @@
+﻿@page "/flash-card/{RangeStart:int}/{RangeEnd:int}"
+
+<div class="title"><div class="center"><p>10 Counter (Flash Card)</p></div></div>
+
+<div class="content">
+    <div></div>
+    <div>
+        <BlazorTenCounter.Components.TenCounter.FlashCardController Start="RangeStart" End="RangeEnd" />
+        <hr />
+        <div class="center">
+            <div class="navsection center">
+                <BlazorTenCounter.Components.TenCounter.NavForm />
+            </div>
+        </div>
+    </div>
+    <div></div>
+</div>
+
+@code {
+    [Parameter]
+    public int RangeStart { get; set; }
+    [Parameter]
+    public int RangeEnd { get; set; }
+}

@@ -1,0 +1,73 @@
+﻿@inject Random Rando
+@rendermode InteractiveServer
+
+<div class="controller">
+    @foreach (Counter counter in counters)
+    {
+        <Counter @ref="counters[counters.IndexOf(counter)]" ID="counters.IndexOf(counter)" />
+    }
+</div>
+<p>@DisplayValue</p>
+<button @onclick=PresentRandom >Show Random!</button>
+
+<script>
+
+    window.addEventListener('resize', function (event) {
+        location.reload();
+    });
+
+</script>
+
+@code {
+    public int DisplayValue { get; set; }
+    [Parameter]
+    public int Start { get; set; }
+    [Parameter]
+    public int End { get; set; }
+
+    private List<Counter> counters = new List<Counter>();
+    private int CurrentCount = 0;
+
+    protected override Task OnParametersSetAsync()
+    {
+        //DisplayValue = Rando.Next(Start, End+1);
+        return base.OnParametersSetAsync();
+    }
+
+    public async Task PresentRandom()
+    {
+        //fresh start?
+        DisplayValue = Rando.Next(Start, End + 1);
+        counters = new List<Counter>();
+
+        int sizeCounters = (int)Math.Ceiling(DisplayValue / 10.0);
+
+        for (int i = 0; i < sizeCounters; i++)
+        {
+            counters.Add(new Counter());
+            while (!counters[i].IsRendered)
+            {
+                await Task.Delay(125);
+            }
+        }
+
+        int addAmount = DisplayValue;
+
+        int CurrentCount = 0;
+        while (CurrentCount < DisplayValue)
+        {
+            CurrentCount += addAmount;
+
+            if (counters != null)
+            {
+                for (int i = 0; i < counters.Count(); i++)
+                {
+                    addAmount = counters[i].AddReturnRemainder(addAmount, false);
+                    if (addAmount == 0) break;
+                }
+            }
+        }
+        
+        
+    }
+}
