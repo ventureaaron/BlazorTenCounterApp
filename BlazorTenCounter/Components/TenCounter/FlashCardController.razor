@@ -7,7 +7,8 @@
         <Counter @ref="counters[counters.IndexOf(counter)]" ID="counters.IndexOf(counter)" />
     }
 </div>
-<p>@DisplayValue</p>
+<input type="number" placeholder="?" @bind-value=Guess />
+<button @onclick=TryGuess>Submit</button>
 <button @onclick=PresentRandom >Show Random!</button>
 
 <script>
@@ -24,50 +25,70 @@
     public int Start { get; set; }
     [Parameter]
     public int End { get; set; }
+    private int Guess;
 
     private List<Counter> counters = new List<Counter>();
-    private int CurrentCount = 0;
 
-    protected override Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        //DisplayValue = Rando.Next(Start, End+1);
-        return base.OnParametersSetAsync();
+        DisplayValue = Rando.Next(Start, End + 1);
+        int sizeCounters = (int)Math.Ceiling(DisplayValue / 10.0);
+
+        counters = new List<Counter>();
+        for (int i = 0; i < sizeCounters; i++)
+        {
+            counters.Add(new Counter());
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await PresentRandom();
+        }
     }
 
     public async Task PresentRandom()
     {
-        //fresh start?
-        DisplayValue = Rando.Next(Start, End + 1);
-        counters = new List<Counter>();
-
-        int sizeCounters = (int)Math.Ceiling(DisplayValue / 10.0);
-
-        for (int i = 0; i < sizeCounters; i++)
-        {
-            counters.Add(new Counter());
-            while (!counters[i].IsRendered)
-            {
-                await Task.Delay(125);
-            }
-        }
-
+        //fresh start?        
         int addAmount = DisplayValue;
-
-        int CurrentCount = 0;
-        while (CurrentCount < DisplayValue)
+        while (addAmount > 0)
         {
-            CurrentCount += addAmount;
-
             if (counters != null)
             {
-                for (int i = 0; i < counters.Count(); i++)
+                int iterations = counters.Count;
+                for (int j = 0; j < iterations; j++)
                 {
-                    addAmount = counters[i].AddReturnRemainder(addAmount, false);
+                    addAmount = counters[j].AddReturnRemainder(addAmount, false);
                     if (addAmount == 0) break;
+                    else if (j == counters.Count - 1)
+                    {
+                        Counter newcounter = new Counter();
+                        counters.Add(newcounter);
+                        //
+                        while (!counters[iterations].IsRendered)
+                        {
+                            await Task.Delay(250);
+                        }
+                        iterations++;
+
+                    }
                 }
             }
         }
-        
-        
+        StateHasChanged();
+    }
+
+    public async Task TryGuess()
+    {
+        if (Guess == DisplayValue)
+        {
+            string test = "here";
+        }
+        else
+        {
+            string miss = "here";
+        }
     }
 }
